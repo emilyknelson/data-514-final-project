@@ -8,21 +8,23 @@ breakpoint()
 cleaned_data = []
 i = 0
 for record in records:
-    print(f"Processing record {i}")
     record = record.strip()
     if record: # Many of the lines in the file are empty. Ignore these.
-        record = json.loads(record)
+        try:
+            record = json.loads(record)
 
-        flattened_record = {
-            'created_at': record['created_at'],
-            'tweet_id': record['id'],
-            'user_id': record['user']['id'],
-            'tweet': record['text'],
-            'screen_name': record['user']['screen_name'],
-            'in_reply_to_user_id': record['in_reply_to_user_id'],
-            'hashtags': record['entities']['hashtags'],
-        }
-        cleaned_data.append(flattened_record)
+            flattened_record = {
+                'created_at': record['created_at'],
+                'tweet_id': record['id'],
+                'user_id': record['user']['id'],
+                'tweet': record['text'],
+                'screen_name': record['user']['screen_name'],
+                'in_reply_to_user_id': record['in_reply_to_user_id'],
+                'hashtags': record['entities']['hashtags'],
+            }
+            cleaned_data.append(flattened_record)
+        except Exception as e:
+            print(f"Raised error for record {i}: {e}")
         i += 1
 
 cleaned_data = pd.DataFrame(cleaned_data)
